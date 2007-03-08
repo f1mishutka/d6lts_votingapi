@@ -11,15 +11,9 @@ define('VOTINGAPI_VALUE_DEFAULT_TYPE', 'percent');
 function votingapi_menu($may_cache) {
   $items = array();
   if ($may_cache) {
-    $items[] = array('path' => 'admin/voting', 
-      'title' => t('voting'),
-      'description' => t('Manage voting and rating systems for your site.'),
-      'callback' => 'votingapi_overview',
-      'type' => MENU_NORMAL_ITEM);
-
-    $items[] = array('path' => 'admin/voting/settings', 
-      'title' => t('voting api'),
-      'description' => t('Site-wide settings for the shared Voting API.'),
+    $items[] = array('path' => 'admin/settings/votingapi', 
+      'title' => t('Voting API'),
+      'description' => t('Global settings for the Voting API.'),
       'callback' => 'drupal_get_form',
       'callback arguments' => array('votingapi_settings'),
       'access' => user_access('administer voting api'),
@@ -27,18 +21,6 @@ function votingapi_menu($may_cache) {
     );
   }
   return $items;
-}
-
-
-
-/**
- * Menu callback; displays the voting admin overview.
- */
-function votingapi_overview() {
-  $menu = menu_get_item(NULL, 'admin/voting');
-  $content = system_admin_menu_block($menu);
-  $output = theme('admin_block_content', $content);
-  return $output;
 }
 
 function votingapi_settings() {
@@ -601,3 +583,14 @@ function votingapi_load_content($content_id = 0, $content_type = 'node') {
   return $content;
 }
 
+function _votingapi_distinct_values($field = 'tag', $table = 'vote') {
+  static $cached;
+  if (!isset($cached[$table][$field])) {
+    $results = db_query("SELECT DISTINCT %s FROM {votingapi_%s}", $field, $table);
+    while($result = db_fetch_object($results)) {
+      $cached[$table][$field][] = $result->$field;
+    }
+    
+  }
+  return $cached[$table][$field];
+}

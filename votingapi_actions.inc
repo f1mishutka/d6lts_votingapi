@@ -9,13 +9,16 @@
 function votingapi_actions_votingapi_action_handlers() {
   $handlers = array(
     'votingapi_vote_result_handler' => array(
-      'name' => 'Vote result properties'
+      'name' => 'Vote result properties',
+      'type' => '*'
     ),
     'votingapi_vote_handler' => array(
-      'name' => 'Individual vote properties'
+      'name' => 'Individual vote properties',
+      'type' => '*'
     ),
     'votingapi_node_properties_handler' => array(
-      'name' => 'Node properties'
+      'name' => 'Node properties',
+      'type' => 'node',
     ),
   );
   return $handlers;
@@ -108,34 +111,44 @@ function votingapi_vote_result_handler($op, $content, $votes, $results, $rule) {
     return $passed;
   }
   else if ($op == 'form') {
+    $form['theme'] = 'votingapi_standard_handler_form';
     $form['value_type'] = array(
       '#type' => 'select',
-      '#options' => votingapi_cache_value_types(),
+      '#options' => _votingapi_distinct_values('value_type', 'cache'),
+      '#default_value' => $content['value_type'],
     );
-  
+
     $form['tag'] = array(
       '#type' => 'select',
-      '#options' => votingapi_cache_tags(),
+      '#options' => _votingapi_distinct_values('tag', 'cache'),
+      '#default_value' => $content['tag'],
     );
-  
+
     $form['function'] = array(
       '#type' => 'select',
-      '#options' => votingapi_cache_functions(),
+      '#options' => _votingapi_distinct_values('function', 'cache'),
+      '#default_value' => $content['function'],
     );
     $form['comparison'] = array(
       '#type' => 'select',
       '#options' => array('==' => 'Is', '!=' => 'Is not', '<' => 'Is less than', '>' => 'Is greater than'),
+      '#default_value' => $content['comparison'],
     );
     $form['value'] = array(
       '#type' => 'textfield',
       '#maxlength' => 10,
-    );
+      '#default_value' => $content['value'],
+   );
     
     return $form;
   }
-  else if ($op == 'name') {
-    return array('votingapi_vote_result_handler' => 'Vote result properties');
-  }
+}
+
+function theme_votingapi_standard_handler_form($form) {
+  $output .= '<div class="container-inline">';
+  $output .= drupal_render($form);
+  $output .= '</div>';
+  return $output;
 }
 
 
@@ -221,14 +234,15 @@ function votingapi_vote_handler($op, $content, $votes, $results, $rule) {
     return $passed;
   }
   else if ($op == 'form') {
+    $form['theme'] = 'votingapi_standard_handler_form';
     $form['value_type'] = array(
       '#type' => 'select',
-      '#options' => votingapi_vote_value_types(),
+      '#options' => _votingapi_distinct_values('value_type'),
     );
-  
+
     $form['tag'] = array(
       '#type' => 'select',
-      '#options' => votingapi_vote_tags(),
+      '#options' => _votingapi_distinct_values('tag'),
     );
   
     $form['comparison'] = array(
@@ -281,6 +295,7 @@ function votingapi_node_properties_handler($op, $content = NULL, $votes = NULL, 
     return TRUE;
   }
   else if ($op == 'form') {
+    $form['theme'] = 'votingapi_standard_handler_form';
     $form['property'] = array(
       '#type' => 'textfield',
       '#maxlength' => 10,
@@ -360,69 +375,6 @@ function action_node_touch_changed($op, $edit = array(), &$node) {
       return array(
         'description' => t('Touch node change date'),
         'type' => t('Node'),
-        'batchable' => true,
-        'configurable' => false,
-      );
-
-    // return an HTML config form for the action
-    case 'form':
-      return '';
-
-    // validate the HTML form
-    case 'validate':
-      return TRUE;
-
-    // process the HTML form to store configuration
-    case 'submit':
-      return '';
-  }
-}
-
-/**
- * Sets the status of a comment to PUBLISHED.
- */
-function action_comment_publish($op, $edit = array(), &$comment) {
-  switch($op) {
-    case 'do':
-      $comment->status = COMMENT_PUBLISHED;
-      comment_save((array)$comment);
-      watchdog('action', t('Set comment id %id to Published', array('%id' => intval($comment->cid))));
-      break;
-
-    case 'metadata':
-      return array(
-        'description' => t('Publish comment'),
-        'type' => t('Comment'),
-        'batchable' => true,
-        'configurable' => false,
-      );
-
-    // return an HTML config form for the action
-    case 'form':
-      return '';
-
-    // validate the HTML form
-    case 'validate':
-      return TRUE;
-
-    // process the HTML form to store configuration
-    case 'submit':
-      return '';
-  }
-}
-
-function action_comment_unpublish($op, $edit = array(), &$comment) {
-  switch($op) {
-    case 'do':
-      $comment->status = COMMENT_NOT_PUBLISHED;
-      comment_save((array)$comment);
-      watchdog('action', t('Set comment id %id to Unpublished', array('%id' => intval($comment->cid))));
-      break;
-
-    case 'metadata':
-      return array(
-        'description' => t('Unpublish comment'),
-        'type' => t('Comment'),
         'batchable' => true,
         'configurable' => false,
       );

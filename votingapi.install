@@ -262,3 +262,8 @@ function votingapi_update_9() {
   $ret[] = update_sql("UPDATE {votingapi_cache} SET timestamp = " . time() . " WHERE timestamp IS NULL;");
   return $ret;
 }
+
+function votingapi_uninstall() {
+  db_query("DROP TABLE {votingapi_vote}");
+  db_query("DROP TABLE {votingapi_cache}");
+}
