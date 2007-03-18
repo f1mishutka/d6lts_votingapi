@@ -27,11 +27,21 @@ function votingapi_views_tables() {
         "fields" => array(
           "value" => array(
             'name' => t("VotingAPI !type !tag value", array('!tag' => $vote_tag, '!type' => $vote_type)),
-            'sortable' => true,
+            'sortable' => TRUE,
+          ),
+          "currentuservalue" => array(
+            'name' => t("VotingAPI !type !tag value (current user only)", array('!tag' => $vote_tag, '!type' => $vote_type)),
+            'field' => 'value',
+            'query handler' => 'votingapi_views_qhandler_currentuser_vote',
+            'sortable' => TRUE,
+          ),
+          "value" => array(
+            'name' => t("VotingAPI !type !tag value", array('!tag' => $vote_tag, '!type' => $vote_type)),
+            'sortable' => TRUE,
           ),
           "timestamp" => array(
             'name' => t("VotingAPI !type !tag timestamp", array('!tag' => $vote_tag, '!type' => $vote_type)),
-            'sortable' => true,
+            'sortable' => TRUE,
             'handler' => 
               array(
                 "views_handler_field_date_small" => t('As Short Date'), 
@@ -39,13 +49,13 @@ function votingapi_views_tables() {
                 "views_handler_field_date_large" => t('As Long Date'), 
                 "views_handler_field_since" =>  t('As Time Ago')
               ),
-            'sortable' => true,
+            'sortable' => TRUE,
             'help' => "Display the time the vote was cast.",
           ),
           "uid" => array(
             'name' => t("VotingAPI !type !tag user", array('!tag' => $vote_tag, '!type' => $vote_type)),
             'handler' => 'votingapi_views_handler_field_username', 
-            'sortable' => true, 
+            'sortable' => TRUE, 
           ),
         ),  
         "sorts" => array(
@@ -73,10 +83,13 @@ function votingapi_views_tables() {
           'uid' => array(
             'name' => t("VotingAPI !type !tag user", array('!tag' => $vote_tag, '!type' => $vote_type)),
             'operator' => array('IS NOT NULL' => t('Has been voted on by'), 'IS NULL' => t('Has not been voted on by')),
-            'list' => 'views_handler_filter_usercurrent',
+            'list' => array('***CURRENT_USER***' => t('Currently Logged In User'), '***ANY_USER***' => t('Any user')),
             'list-type' => 'select',
-            'handler' => 'votingapi_views_handler_filter_uid_voted',
+            'handler' => 'votingapi_handler_filter_uid_voted',
             'help' => t('Filter nodes by whether the currently logged in user has voted.'),
+            'content_type' => 'node',
+            'value_type' => $vote_type,
+            'tag' => $vote_tag,
           )
         ),
       );
@@ -112,7 +125,7 @@ function votingapi_views_tables() {
           "fields" => array(
             "value" => array(
               'name' => t("VotingAPI !type !tag result (!function)", array('!tag' => $cache_tag, '!type' => $cache_type, '!function' => $cache_function)),
-              'sortable' => true,
+              'sortable' => TRUE,
             ),
           ),  
           "sorts" => array(
@@ -146,21 +159,43 @@ function votingapi_views_handler_field_username($fieldinfo, $fielddata, $value, 
   }
 }
 
-function votingapi_views_handler_filter_uid_voted($op, $filter, $filterinfo, &$query) {
-  $value = $filter['value'];
+function votingapi_handler_filter_uid_voted($op, $filter, $filterinfo, &$query) {
+  $table_data = _views_get_tables();
+  $joininfo['left'] = array(
+    'table' => 'node',
+    'field' => 'nid'
+  );
+  $joininfo['right'] = array(
+    'field' =>'content_id'
+  );
+  $joininfo['extra'] = array(
+    'value_type' => $filterinfo['value_type'],
+    'content_type' => $filterinfo['content_type'],
+    'tag' => $filterinfo['tag'],
+  );
+
+  if ($filter['value'] != '***ANY_USER***') {
+    $joininfo['extra']['uid'] = $filter['value'];
+  }
+
+  $tblnum = $query->add_table('votingapi_vote', false, 1, $joininfo);
+  $table = $query->get_table_name('votingapi_vote', $tblnum);
+
+  $query->add_where("$table.value %s", $filter['operator']);
+}
+
+function votingapi_views_qhandler_currentuser_vote($field, $fieldinfo, &$query) {
+  $table = $fieldinfo['table'];
+  $query->add_where("$table.uid = ***CURRENT_USER***");
+}
+
+function votingapi_handler_filter_value($op, $filter, $filterinfo, &$query) {
   $table = $filterinfo['table'];
   $column = $filterinfo['field'];
   $field = "$table.$column";
-
-  $table_data = _views_get_tables();
-  $joininfo = $table_data[$table]['join'];
-  $joininfo['extra'] = array('uid' => $filter['value']);
-
   $query->ensure_table($table);
-  $query->set_distinct(); // once you do this, there's just one node.
-  $query->add_where("%s %s", $field, $filter['operator']);
+  $query->add_where("%s %s %d", $field, $filter['operator'], $filter['value']);
 }
-
 
 // Both of these functions are stubbed out -- we need provisions for modules to expose
 // their own formatters, to be selected by the users when setting up the view.
@@ -172,13 +207,12 @@ function votingapi_views_default_vote_handler($fieldinfo, $fielddata, $value, $d
   return $value;
 }
 
-function votingapi_handler_filter_value($op, $filter, $filterinfo, &$query) {
-  $value = $filter['value'];
-  $table = $filterinfo['table'];
-  $column = $filterinfo['field'];
-  $field = "$table.$column";
-  $query->ensure_table($table);
-  $query->add_where("%s %s %d", $field, $filter['operator'], $value);
+function votingapi_vote_formatters($op, $value_type, $tag, $value) {
+  
+}
+
+function votingapi_result_formatters($op, $value_type, $tag, $function, $value) {
+  
 }
 
 /**
