@@ -127,7 +127,7 @@ function _votingapi_process_action_set($content = NULL, $votes = array(), $resul
 
   // Here, we iterate through every rule. The value starts as true,
   // and a single false will trip it to failure state.
-  foreach($action_set['conditions'] as $condition) {
+  foreach ($action_set['conditions'] as $condition) {
     $function = $condition['handler'];
     if (function_exists($function)) {
       // this calls a handler with several ops. 'process' and 'input' are the two i've thought of.
@@ -160,7 +160,7 @@ function _votingapi_process_action_set($content = NULL, $votes = array(), $resul
   if ($set_result == TRUE) {
     // Now check sub-actions.
 
-    foreach($action_set['subsets'] as $subset) {
+    foreach ($action_set['subsets'] as $subset) {
       // check the required flag of the subset. if it is, evaluate it.
       if ($subset['required'] == TRUE) {
         $set_result = $set_result && _votingapi_process_action_set($content, $votes, $results, $subset, $actions);
@@ -176,7 +176,7 @@ function _votingapi_process_action_set($content = NULL, $votes = array(), $resul
         $actions[] = $action;
       }
       
-      foreach($action_set['subsets'] as $subset) {
+      foreach ($action_set['subsets'] as $subset) {
         // now handle the non-required subsets
         if ($subset['required'] == FALSE) {
           _votingapi_process_action_set($content, $votes, $results, $subset, $actions);
@@ -201,12 +201,12 @@ function votingapi_rebuild_action_cache() {
   $sets = _votingapi_load_action_sets_from_db();
   $module_sets = _votingapi_load_action_sets_from_modules();
   
-  foreach($sets as $name => $set) {
+  foreach ($sets as $name => $set) {
     $active_sets[$name] = $set;
   }
 
   $status_list = variable_get('votingapi_action_status', array());
-  foreach($module_sets as $name => $set) {
+  foreach ($module_sets as $name => $set) {
     if (!in_array($name, array_keys($sets))) {
       if ($status_list[$name]) {
         $sets[$name] = $set;
