@@ -175,11 +175,11 @@ function votingapi_add_vote($content_type, $content_id, $value, $value_type = VO
   $vobj->tag = $tag;
   $vobj->uid = $uid;
   $vobj->timestamp = time();
+
+  $vobj->hostname = $_SERVER['REMOTE_ADDR'];
+  // Append internal IP if it exists.
   if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-    $vobj->hostname = $_SERVER['HTTP_X_FORWARDED_FOR'];
-  }
-  else {
-    $vobj->hostname = $_SERVER['REMOTE_ADDR'];
+    $vobj->hostname .= '-'. $_SERVER['HTTP_X_FORWARDED_FOR'];
   }
 
   db_query("INSERT INTO {votingapi_vote} (vote_id, content_type, content_id, value, value_type, tag, uid, timestamp, hostname) VALUES (%d, '%s', %d, %f, '%s', '%s', %d, %d, '%s')", 
