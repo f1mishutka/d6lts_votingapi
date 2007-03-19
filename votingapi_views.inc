@@ -27,18 +27,21 @@ function votingapi_views_tables() {
         "fields" => array(
           "value" => array(
             'name' => t("VotingAPI !type !tag value", array('!tag' => $vote_tag, '!type' => $vote_type)),
+            'handler' => votingapi_get_formatters(array('value_type' => $vote_type, 'tag' => $vote_tag)),
+            'value_type' => $vote_type,
+            'tag' => $vote_tag,
             'sortable' => TRUE,
           ),
           "currentuservalue" => array(
             'name' => t("VotingAPI !type !tag value (current user only)", array('!tag' => $vote_tag, '!type' => $vote_type)),
             'field' => 'value',
+            'handler' => votingapi_get_formatters(array('value_type' => $vote_type, 'tag' => $vote_tag)),
+            'value_type' => $vote_type,
+            'tag' => $tag,
             'query handler' => 'votingapi_views_qhandler_currentuser_vote',
             'sortable' => TRUE,
           ),
-          "value" => array(
-            'name' => t("VotingAPI !type !tag value", array('!tag' => $vote_tag, '!type' => $vote_type)),
-            'sortable' => TRUE,
-          ),
+
           "timestamp" => array(
             'name' => t("VotingAPI !type !tag timestamp", array('!tag' => $vote_tag, '!type' => $vote_type)),
             'sortable' => TRUE,
@@ -93,7 +96,7 @@ function votingapi_views_tables() {
           )
         ),
       );
-      $tables['votingapi_vote_' . $vote_tag .'_'. $vote_type] = $table;
+      $tables['votingapi_vote_'. $vote_tag .'_'. $vote_type] = $table;
     }
   }
 
@@ -125,6 +128,10 @@ function votingapi_views_tables() {
           "fields" => array(
             "value" => array(
               'name' => t("VotingAPI !type !tag result (!function)", array('!tag' => $cache_tag, '!type' => $cache_type, '!function' => $cache_function)),
+              'handler' => votingapi_get_formatters(array('value_type' => $cache_type, 'tag' => $cache_tag, 'function' => $cache_function)),
+              'value_type' => $cache_type,
+              'tag' => $cache_tag,
+              'function' => $cache_function,
               'sortable' => TRUE,
             ),
           ),  
@@ -166,7 +173,7 @@ function votingapi_handler_filter_uid_voted($op, $filter, $filterinfo, &$query) 
     'field' => 'nid'
   );
   $joininfo['right'] = array(
-    'field' =>'content_id'
+    'field' => 'content_id'
   );
   $joininfo['extra'] = array(
     'value_type' => $filterinfo['value_type'],
@@ -197,69 +204,40 @@ function votingapi_handler_filter_value($op, $filter, $filterinfo, &$query) {
   $query->add_where("%s %s %d", $field, $filter['operator'], $filter['value']);
 }
 
-// Both of these functions are stubbed out -- we need provisions for modules to expose
-// their own formatters, to be selected by the users when setting up the view.
-function votingapi_views_default_result_handler($fieldinfo, $fielddata, $value, $data) {
+function votingapi_get_formatters($details = array()) {
+  $formatters = array(
+    'votingapi_views_formatter_raw' => t('Raw value'),
+    'votingapi_views_formatter_cleaned' => t('Cleaned version'),
+  );
+  $formatters = array_merge($formatters, module_invoke_all('votingapi_views_formatters', $details));
+  return $formatters;
+}
+
+function votingapi_views_formatter_raw($fieldinfo, $fielddata, $value, $data) {
   return $value;
 }
 
-function votingapi_views_default_vote_handler($fieldinfo, $fielddata, $value, $data) {
-  return $value;
-}
 
-function votingapi_vote_formatters($op, $value_type, $tag, $value) {
-  
-}
-
-function votingapi_result_formatters($op, $value_type, $tag, $function, $value) {
-  
-}
-
-/**
- * The following three functions can be used by external modules, themes,
- * etc. to display formatted results for a vote object or a vote result
- * object. It's up to a VotingAPI module to catch the 'format' $op, and
- * return something that makes sense. The first module that responds 'wins',
- * so try to filter your responses sensibly. If it's not a voting object
- * your module would normally create, just return;. The next module can
- * take a stab.
- */
-
-function votingapi_format_tag($vobj) {
-  $vals = votingapi_invoke('format', $vobj, 'tag');
-  if (isset($vals[0])) {
-    return $vals[0];
+function votingapi_views_formatter_cleaned($fieldinfo, $fielddata, $value, $data) {
+  if ($value === NULL) {
+    return '';
   }
-  else {
-    return ucfirst($vobj->tag);
+
+  switch ($fieldinfo['value_type']) {
+    case 'percent':
+      return round($value, 1) .'%';
+    case 'points':
+      return round($value, 1) .' '. t('points');
+    default:
+      return $value;
   }
 }
 
-function votingapi_format_value($vobj) {
-  $vals = votingapi_invoke('format', $vobj, 'value');
-  if (isset($vals[0])) {
-    return $vals[0];
-  }
-  else {
-    return $vobj->value;
-  }
-}
-
-function votingapi_format_result($vobj) {
-  $vals = votingapi_invoke('format', $vobj, 'result');
-  if (isset($vals[0])) {
-    return $vals[0];
-  }
-  else {
-    return $vobj->value;
-  }
-}
- 
 function _votingapi_views_values($field = 'tag', $table = 'vote') {
   static $cached;
   if (!isset($cached[$table][$field])) {
     $results = db_query("SELECT DISTINCT %s FROM {votingapi_%s} WHERE content_type = 'node'", $field, $table);
-    while($result = db_fetch_object($results)) {
+    while ($result = db_fetch_object($results)) {
       $cached[$table][$field][$result->$field] = $result->$field;
     }
   }

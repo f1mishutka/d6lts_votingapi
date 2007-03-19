@@ -68,7 +68,7 @@ function votingapi_set_vote($content_type, $content_id, $vote, $uid = NULL, $rec
   }
   
   if (is_array($vote)) {
-    foreach($vote as $vobj) {
+    foreach ($vote as $vobj) {
       $user_votes[] = votingapi_set_vote($content_type, $content_id, $vobj, $uid, TRUE);
     }
   }
@@ -248,7 +248,7 @@ function votingapi_delete_votes($votes = array()) {
  */
 function _votingapi_get_raw_votes($content_type, $content_id, $value_type = NULL, $tag_list = NULL, $uid = NULL) {
   if ($tag_list) {
-    $filter_string .= " AND v.tag IN ('" . implode("','",$tag_list) . "')";
+    $filter_string .= " AND v.tag IN ('". implode("','", $tag_list) ."')";
   }
   
   // Still not sure all this checking is necessary, but a quick cast can't hurt.
@@ -263,12 +263,12 @@ function _votingapi_get_raw_votes($content_type, $content_id, $value_type = NULL
       }
     }
     if (count($uid_list)) {
-      $filter_string .= " AND v.uid IN ('" . implode("','",$uid_list) . "')";
+      $filter_string .= " AND v.uid IN ('". implode("','", $uid_list) ."')";
     }
   }
 
   if (isset($value_type)) {
-    $filter_string .= " AND v.value_type = '" . $value_type . "'";
+    $filter_string .= " AND v.value_type = '". $value_type ."'";
   }
 
   $votes = array();
@@ -428,7 +428,7 @@ function votingapi_recalculate_results($content_type, $content_id, $force_calcul
     $votes = _votingapi_get_raw_votes($content_type, $content_id);
     
     // Loop through, calculate per-type and per-tag totals, etc.
-    foreach($votes as $vote) {
+    foreach ($votes as $vote) {
       switch ($vote->value_type) {
         case 'percent':
           $cache[$vote->tag][$vote->value_type]['count'] += 1;
@@ -448,8 +448,8 @@ function votingapi_recalculate_results($content_type, $content_id, $force_calcul
    
     // Do a quick loop through to calculate averages.
     // This is also a good example of how external modules can do their own processing.
-    foreach ($cache as $tag=>$types) {
-      foreach ($types as $type=>$functions) {
+    foreach ($cache as $tag => $types) {
+      foreach ($types as $type => $functions) {
         if ($type == 'percent' || $type == 'points') {
           $cache[$tag][$type]['average'] = $functions['sum'] / $functions['count'];
         }
@@ -464,9 +464,9 @@ function votingapi_recalculate_results($content_type, $content_id, $force_calcul
     votingapi_invoke('calculate', $cache, $votes, $content_type, $content_id);
     
     // Now, do the caching. Woo.
-    foreach ($cache as $tag=>$types) {
-      foreach ($types as $type=>$functions) {
-        foreach ($functions as $function=>$value) {
+    foreach ($cache as $tag => $types) {
+      foreach ($types as $type => $functions) {
+        foreach ($functions as $function => $value) {
          $cached[] = _votingapi_insert_cache_result($content_type, $content_id, $value, $type, $tag, $function);
         }
       }
@@ -538,9 +538,9 @@ function _votingapi_insert_cache_result($content_type, $content_id, $value, $val
  * Invoke a hook_votingapi_*() operation.
  */
 function votingapi_invoke($hook, &$a1, $a2 = NULL, $a3 = NULL, $a4 = NULL, $a5 = NULL, $a6 = NULL) {
-  $hook = 'votingapi_' . $hook;
+  $hook = 'votingapi_'. $hook;
   foreach (module_implements($hook) as $module) {
-    $function = $module . '_' . $hook;
+    $function = $module .'_'. $hook;
     $result = ($function($a1, $a2, $a3, $a4, $a5, $a6));
 
     if (is_array($result)) {
@@ -590,7 +590,7 @@ function _votingapi_distinct_values($field = 'tag', $table = 'vote') {
   static $cached;
   if (!isset($cached[$table][$field])) {
     $results = db_query("SELECT DISTINCT %s FROM {votingapi_%s}", $field, $table);
-    while($result = db_fetch_object($results)) {
+    while ($result = db_fetch_object($results)) {
       $cached[$table][$field][] = $result->$field;
     }
     
