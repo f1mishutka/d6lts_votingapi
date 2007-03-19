@@ -258,7 +258,15 @@ function votingapi_update_8() {
 
 function votingapi_update_9() {
   $ret = array();
-  $ret[] = update_sql("ALTER TABLE {votingapi_cache} ADD COLUMN timestamp int(11) default NULL;");
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+        $ret[] = update_sql("ALTER TABLE {votingapi_cache} ADD COLUMN timestamp int(11) default NULL;");
+      break;
+    case 'pgsql':
+        $ret[] = update_sql("ALTER TABLE {votingapi_cache} ADD COLUMN timestamp int4 default NULL;");
+      break;
+  }
   $ret[] = update_sql("UPDATE {votingapi_cache} SET timestamp = " . time() . " WHERE timestamp IS NULL;");
   return $ret;
 }
