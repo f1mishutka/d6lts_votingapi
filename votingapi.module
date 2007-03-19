@@ -26,6 +26,13 @@ function votingapi_menu($may_cache) {
   return $items;
 }
 
+/**
+* Implementation of hook_perm
+*/
+function votingapi_perm() {
+  return array('administer voting api');
+}
+
 function votingapi_settings() {
   $form['votingapi_calculation_schedule'] = array(
     '#type' => 'radios',
