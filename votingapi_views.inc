@@ -5,6 +5,9 @@ function votingapi_views_tables() {
   $vote_tags = _votingapi_views_values($field = 'tag', $table = 'vote');
   $vote_types = _votingapi_views_values($field = 'value_type', $table = 'vote');
 
+  $vote_tags = array_merge($vote_tags, array('vote'));
+  $vote_types = array_merge($vote_types, array('percent'));
+
   foreach ($vote_tags as $vote_tag) {
     foreach ($vote_types as $vote_type) {
       $table = array(
@@ -103,6 +106,10 @@ function votingapi_views_tables() {
   $cache_tags = _votingapi_views_values($field = 'tag', $table = 'cache');
   $cache_types = _votingapi_views_values($field = 'value_type', $table = 'cache');
   $cache_functions = _votingapi_views_values($field = 'function', $table = 'cache');
+
+  $cache_tags = array_merge($vote_tags, array('vote'));
+  $cache_types = array_merge($cache_types, array('percent'));
+  $cache_functions = array_merge($cache_functions, array('average', 'count'));
 
   foreach ($cache_functions as $cache_function) {
     foreach ($cache_tags as $cache_tag) {
@@ -241,5 +248,5 @@ function _votingapi_views_values($field = 'tag', $table = 'vote') {
       $cached[$table][$field][$result->$field] = $result->$field;
     }
   }
-  return $cached[$table][$field];
+  return empty($cached[$table][$field]) ? array() : $cached[$table][$field];
 }
