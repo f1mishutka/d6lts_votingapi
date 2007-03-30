@@ -20,10 +20,13 @@ function votingapi_menu($may_cache) {
       'type' => MENU_NORMAL_ITEM
     );
   }
+  return $items;
+}
+
+function votingapi_init() {
   if (module_exists('views')) {
     require_once(drupal_get_path('module', 'votingapi') .'/votingapi_views.inc');
   }
-  return $items;
 }
 
 /**

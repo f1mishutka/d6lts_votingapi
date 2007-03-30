@@ -5,8 +5,8 @@ function votingapi_views_tables() {
   $vote_tags = _votingapi_views_values($field = 'tag', $table = 'vote');
   $vote_types = _votingapi_views_values($field = 'value_type', $table = 'vote');
 
-  $vote_tags = array_merge($vote_tags, array('vote'));
-  $vote_types = array_merge($vote_types, array('percent'));
+  $vote_tags = array_unique(array_merge($vote_tags, array('vote')));
+  $vote_types = array_unique(array_merge($vote_types, array('percent')));
 
   foreach ($vote_tags as $vote_tag) {
     foreach ($vote_types as $vote_type) {
@@ -35,16 +35,6 @@ function votingapi_views_tables() {
             'tag' => $vote_tag,
             'sortable' => TRUE,
           ),
-          "currentuservalue" => array(
-            'name' => t("VotingAPI !type !tag value (current user only)", array('!tag' => $vote_tag, '!type' => $vote_type)),
-            'field' => 'value',
-            'handler' => votingapi_get_formatters(array('value_type' => $vote_type, 'tag' => $vote_tag)),
-            'value_type' => $vote_type,
-            'tag' => $tag,
-            'query handler' => 'votingapi_views_qhandler_currentuser_vote',
-            'sortable' => TRUE,
-          ),
-
           "timestamp" => array(
             'name' => t("VotingAPI !type !tag timestamp", array('!tag' => $vote_tag, '!type' => $vote_type)),
             'sortable' => TRUE,
@@ -100,6 +90,73 @@ function votingapi_views_tables() {
         ),
       );
       $tables['votingapi_vote_'. $vote_tag .'_'. $vote_type] = $table;
+
+      $table = array(
+        "name" => "votingapi_vote", 
+        "provider" => "votingapi",
+        "join" => array(
+          "left" => array(
+            "table" => "node",
+            "field" => "nid"
+          ), 
+          "right" => array(
+            "field" => "content_id"
+          ),
+          "extra" => array(
+            'content_type' => 'node',
+            'value_type' => $vote_type,
+            'tag' => $vote_tag,
+            'uid' => '***CURRENT_USER***'
+          ),
+        ),
+        "fields" => array(
+          "value" => array(
+            'name' => t("VotingAPI !type !tag value (current user only)", array('!tag' => $vote_tag, '!type' => $vote_type)),
+            'field' => 'value',
+            'handler' => votingapi_get_formatters(array('value_type' => $vote_type, 'tag' => $vote_tag)),
+            'value_type' => $vote_type,
+            'tag' => $tag,
+            'sortable' => TRUE,
+          ),
+
+          "timestamp" => array(
+            'name' => t("VotingAPI !type !tag timestamp (current user only)", array('!tag' => $vote_tag, '!type' => $vote_type)),
+            'sortable' => TRUE,
+            'handler' => 
+              array(
+                "views_handler_field_date_small" => t('As Short Date'), 
+                "views_handler_field_date" => t('As Medium Date'), 
+                "views_handler_field_date_large" => t('As Long Date'), 
+                "views_handler_field_since" =>  t('As Time Ago')
+              ),
+            'sortable' => TRUE,
+            'help' => "Display the time the vote was cast.",
+          ),
+        ),  
+        "sorts" => array(
+          "value" => array('name' => t("VotingAPI !type !tag vote", array('!tag' => $vote_tag, '!type' => $vote_type))),
+          "timestamp" => array('name' => t("VotingAPI !type !tag timestamp", array('!tag' => $vote_tag, '!type' => $vote_type))),
+        ),
+        'filters' => array(
+          'value' => array(
+            'name' => t("VotingAPI !type !tag value (current user only)", array('!tag' => $vote_tag, '!type' => $vote_type)),
+            'operator' => 'views_handler_operator_gtlt',
+            'handler' => 'votingapi_handler_filter_value',
+            'value-type' => 'string',
+            'help' => t("Filter nodes by values of the current user's vote for them."),
+          ),
+          'timestamp' => array(
+            'name' => t("VotingAPI !type !tag timestamp (current user only)", array('!tag' => $vote_tag, '!type' => $vote_type)),
+            'operator' => 'views_handler_operator_gtlt',
+            'value' => views_handler_filter_date_value_form(),
+            'handler' => 'views_handler_filter_timestamp',
+            'option' => 'string',
+            'help' => t('Filter nodes by the date they were voted on by the current user.')
+              .' '. views_t_strings('filter date'),
+          ),
+        ),
+      );
+      $tables['votingapi_vote_'. $vote_tag .'_'. $vote_type . '_current_user'] = $table;
     }
   }
 
@@ -107,9 +164,9 @@ function votingapi_views_tables() {
   $cache_types = _votingapi_views_values($field = 'value_type', $table = 'cache');
   $cache_functions = _votingapi_views_values($field = 'function', $table = 'cache');
 
-  $cache_tags = array_merge($vote_tags, array('vote'));
-  $cache_types = array_merge($cache_types, array('percent'));
-  $cache_functions = array_merge($cache_functions, array('average', 'count'));
+  $cache_tags = array_unique(array_merge($vote_tags, array('vote')));
+  $cache_types = array_unique(array_merge($cache_types, array('percent')));
+  $cache_functions = array_unique(array_merge($cache_functions, array('average', 'count')));
 
   foreach ($cache_functions as $cache_function) {
     foreach ($cache_tags as $cache_tag) {
