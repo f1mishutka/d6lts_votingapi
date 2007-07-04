@@ -5,21 +5,17 @@
  * A generalized voting API for Drupal. See README.txt for details.
  */
 
-define('VOTINGAPI_VALUE_DEFAULT_TAG', 'vote');
-define('VOTINGAPI_VALUE_DEFAULT_TYPE', 'percent');
-
-function votingapi_menu($may_cache) {
+function votingapi_menu() {
   $items = array();
-  if ($may_cache) {
-    $items[] = array('path' => 'admin/settings/votingapi', 
-      'title' => t('Voting API'),
-      'description' => t('Global settings for the Voting API.'),
-      'callback' => 'drupal_get_form',
-      'callback arguments' => array('votingapi_settings'),
-      'access' => user_access('administer voting api'),
-      'type' => MENU_NORMAL_ITEM
-    );
-  }
+  $items['admin/settings/votingapi'] = array(
+    'title' => 'Voting API',
+    'description' => 'Global settings for the Voting API.',
+    'page callback' => 'drupal_get_form',
+    'callback arguments' => array('votingapi_settings'),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer voting api'),
+    'type' => MENU_NORMAL_ITEM
+  );
   return $items;
 }
 
