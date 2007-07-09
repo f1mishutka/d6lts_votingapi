@@ -1,5 +1,4 @@
 ; $Id$
 name = Voting API
 description = Provides a shared voting API for other modules.
-package = Voting
-core = 6.x
+package = Voting API
