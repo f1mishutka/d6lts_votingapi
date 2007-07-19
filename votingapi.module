@@ -213,7 +213,7 @@ function votingapi_add_vote($content_type, $content_id, $value, $value_type = VO
  *   The $new version of the vote object.
  */
 function votingapi_change_vote($vobj, $value) {
-  db_query("UPDATE {votingapi_vote} SET value=%f WHERE vote_id=%d", $value, $vobj->vote_id);
+  db_query("UPDATE {votingapi_vote} SET value=%f, timestamp=%d WHERE vote_id=%d", $value, time(), $vobj->vote_id);
   
   // Give other modules a chance to respond to the change.
   // Both the existing vote object and the new vote value are handed off to interested

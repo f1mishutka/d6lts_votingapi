@@ -89,7 +89,7 @@ function votingapi_views_tables() {
           )
         ),
       );
-      $tables['votingapi_vote_'. $vote_tag .'_'. $vote_type] = $table;
+      $tables['votingapi_vote_'. preg_replace('!\W!', '', $vote_tag) .'_'. preg_replace('!\W!', '', $vote_type)] = $table;
 
       $table = array(
         "name" => "votingapi_vote", 
@@ -156,7 +156,7 @@ function votingapi_views_tables() {
           ),
         ),
       );
-      $tables['votingapi_vote_'. $vote_tag .'_'. $vote_type . '_current_user'] = $table;
+      $tables['votingapi_vote_'. preg_replace('!\W!', '', $vote_tag) .'_'. preg_replace('!\W!', '', $vote_type) . '_current_user'] = $table;
     }
   }
 
