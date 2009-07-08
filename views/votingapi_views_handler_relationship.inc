@@ -162,7 +162,7 @@ class votingapi_views_handler_relationship extends views_handler_relationship {
     $def = $this->definition;
     $def['table'] = $this->definition['base'];
     $def['field'] = 'content_id';
-    $def['left_table'] = $this->table;
+    $def['left_table'] = $this->relationship ? $this->relationship : $this->table;
     $def['left_field'] = $this->field;
     if (!empty($this->options['required'])) {
       $def['type'] = 'INNER';
