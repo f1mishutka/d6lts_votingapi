@@ -288,6 +288,14 @@ function votingapi_views_data_alter(&$views_data) {
     'pseudo_vote' => 'votingapi_vote',    // for legacy compatability w/RC1.
     'pseudo_cache' => 'votingapi_cache',  // for legacy compatability w/RC1.
   );
+  $default_relationships[] = array(
+    'description' => t('users'),
+    'content_type' => 'user',
+    'base_table' => 'users',
+    'content_id_column' => 'uid',
+    'pseudo_vote' => 'votingapi_vote',    // for legacy compatability w/RC1.
+    'pseudo_cache' => 'votingapi_cache',  // for legacy compatability w/RC1.
+  );
 
   foreach ($default_relationships as $data) {
     $pseudo = str_replace(array(' ','-','.'), '_', $data['content_type'] . '_' . $data['content_id_column']);
