@@ -150,6 +150,10 @@ class votingapi_views_handler_relationship extends views_handler_relationship {
     if ($v['function'] == '**OTHER**') {
       $form_state['values']['options']['votingapi']['function'] = $v['function_other'];
     }
+    
+    foreach (array('function_other', 'value_type_other', 'tag_other') as $key) {
+      unset($form_state['values']['options']['votingapi'][$key]);
+    }
   }
 
   /**
