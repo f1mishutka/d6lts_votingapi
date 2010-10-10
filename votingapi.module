@@ -507,7 +507,7 @@ function _votingapi_get_standard_results($content_type, $content_id) {
  * Retrieve the value of the first vote matching the criteria passed in.
  */
 function votingapi_select_single_vote_value($criteria = array()) {
-  if ($votes = votingapi_select_votes($criteria)) {
+  if ($votes = votingapi_select_votes($criteria, 1)) {
     return $votes[0]['value'];
   }
 }
@@ -516,7 +516,7 @@ function votingapi_select_single_vote_value($criteria = array()) {
  * Retrieve the value of the first result matching the criteria passed in.
  */
 function votingapi_select_single_result_value($criteria = array()) {
-  if ($results = votingapi_select_results($criteria)) {
+  if ($results = votingapi_select_results($criteria, 1)) {
     return $results[0]['value'];
   }
 }

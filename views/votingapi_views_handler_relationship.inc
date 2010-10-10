@@ -190,7 +190,7 @@ class votingapi_views_handler_relationship extends views_handler_relationship {
             'value' => $value,
             'numeric' => FALSE
           );
-          $alias .= '_'. $value;
+          $alias .= '_'. str_replace(array(' ','-','.'), '_', $value);
         }
       }
     }
