@@ -15,10 +15,12 @@ class VoteResultStorage extends SqlContentEntityStorage implements VoteResultSto
 
   /**
    * @inheritdoc
+   *
    * @param string $entity_type_id
    * @param int $entity_id
    * @param string $vote_type
    * @param string $function
+   *
    * @return \Drupal\votingapi\Entity\VoteResult[]
    */
   public function getEntityResults($entity_type_id, $entity_id, $vote_type, $function) {

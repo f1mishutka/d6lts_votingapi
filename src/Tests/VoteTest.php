@@ -38,13 +38,13 @@ class VoteTest extends WebTestBase {
 
     // Add a vote to a node.
     /** @var \Drupal\votingapi\VoteInterface $vote */
-    $vote = $vote_storage->create(array(
+    $vote = $vote_storage->create([
       'type' => 'type',
       'entity_id' => $node->id(),
       'entity_type' => 'node',
       'user_id' => $user->id(),
       'value' => -1,
-    ));
+    ]);
     $vote->save();
     $votes = $query->execute();
     $this->assertEqual(count($votes), 1, 'After a vote is cast on a node, it can be retrieved.');
@@ -55,11 +55,11 @@ class VoteTest extends WebTestBase {
     $this->assertNotEqual($vote->getSource(), '', 'A vote with no explicit source received the default value.');
 
     // Add a vote to a user
-    $vote = $vote_storage->create(array(
+    $vote = $vote_storage->create([
       'type' => 'vote',
       'entity_id' => $user->id(),
       'entity_type' => 'user',
-    ));
+    ]);
     $vote->save();
 
     $vote_query = $this->container->get('entity.query')->get('vote');
@@ -73,7 +73,7 @@ class VoteTest extends WebTestBase {
     $this->assertEqual($vote->getValue(), 0, 'A vote with no explicit value received the default value.');
 
     // Deleting entity deletes votes
-    entity_delete_multiple('user', array($user->id()));
+    entity_delete_multiple('user', [$user->id()]);
     $votes = $query->execute();
     $this->assertEqual(count($votes), 0, 'When an entity is deleted, the votes are also deleted.');
   }
@@ -88,15 +88,15 @@ class VoteTest extends WebTestBase {
     $manager = $this->container->get('plugin.manager.votingapi.resultfunction');
 
     // Save a few votes so that we have data.
-    $values = array(10, 20, 60);
+    $values = [10, 20, 60];
     foreach ($values as $value) {
-      $vote_storage->create(array(
+      $vote_storage->create([
         'type' => 'vote',
         'entity_id' => $node->id(),
         'entity_type' => 'node',
         'user_id' => $user->id(),
         'value' => $value,
-      ))->save();
+      ])->save();
     }
 
     $results = $manager->getResults('node', $node->id());
@@ -118,7 +118,7 @@ class VoteTest extends WebTestBase {
     // $this->assertEqual($results['vote']['zebra'], 10101, 'New result is correct.');
 
     // Deleting entity removes results
-    entity_delete_multiple('node', array($node->id()));
+    entity_delete_multiple('node', [$node->id()]);
     $results = $manager->getResults('node', $node->id());
     $this->assertTrue(empty($results), 'When an entity is deleted, the voting results are also deleted.');
   }
@@ -131,20 +131,20 @@ class VoteTest extends WebTestBase {
     $node = $this->drupalCreateNode();
 
     // Save a few votes from different anonymous users.
-    $values = array(
+    $values = [
       10 => 'source_1',
       20 => 'source_2',
       60 => 'source_2',
-    );
+    ];
     foreach ($values as $value => $source) {
-      $vote_storage->create(array(
+      $vote_storage->create([
         'type' => 'vote',
         'entity_id' => $node->id(),
         'entity_type' => 'node',
         'user_id' => 0,
         'value' => $value,
         'vote_source' => $source,
-      ))->save();
+      ])->save();
     }
 
     // Retrieve the votes. For now, just count them.

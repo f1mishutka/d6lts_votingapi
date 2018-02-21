@@ -34,6 +34,7 @@ interface VoteResultFunctionInterface {
    *
    * @param \Drupal\votingapi\Entity\Vote[] $votes
    *   An array of Vote entities.
+   *
    * @return int
    *   A result based on the supplied votes.
    */

@@ -41,7 +41,8 @@ class VoteStorage extends SqlContentEntityStorage implements VoteStorageInterfac
   static function defaultVoteSource($vote_source = NULL) {
     if (is_null($vote_source)) {
       $vote = Vote::create(['type' => 'vote']);
-      $callback = $vote->getFieldDefinition('vote_source')->getDefaultValueCallback();
+      $callback = $vote->getFieldDefinition('vote_source')
+        ->getDefaultValueCallback();
       $vote_source = $callback();
     }
     return $vote_source;

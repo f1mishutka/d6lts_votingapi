@@ -11,6 +11,7 @@ interface VoteStorageInterface extends EntityStorageInterface {
 
   /**
    * Get votes for a user
+   *
    * @param $uid
    * @param string $vote_type_id
    * @param string $entity_type_id
@@ -24,6 +25,7 @@ interface VoteStorageInterface extends EntityStorageInterface {
 
   /**
    * Delete votes for a user
+   *
    * @param $uid
    * @param string $vote_type_id
    * @param string $entity_type_id
@@ -47,6 +49,7 @@ interface VoteStorageInterface extends EntityStorageInterface {
 
   /**
    * Get votes since a determined moment
+   *
    * @return mixed
    */
   function getVotesSinceMoment();
@@ -54,6 +57,7 @@ interface VoteStorageInterface extends EntityStorageInterface {
   /**
    * @param $entity_type_id
    * @param $entity_id
+   *
    * @return boolean
    */
   function deleteVotesForDeletedEntity($entity_type_id, $entity_id);
