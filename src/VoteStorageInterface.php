@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\votingapi\VoteStorageInterface.
- */
-
 namespace Drupal\votingapi;
 
 use Drupal\Core\Entity\EntityStorageInterface;

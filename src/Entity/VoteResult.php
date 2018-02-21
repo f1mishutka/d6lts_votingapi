@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\votingapi\Entity\VoteResult.
- */
-
 namespace Drupal\votingapi\Entity;
 
 use Drupal\Core\Field\BaseFieldDefinition;

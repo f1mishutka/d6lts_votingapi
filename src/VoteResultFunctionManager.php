@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\votingapi\VoteResultFunctionManager.
- */
-
 namespace Drupal\votingapi;
 
 use Drupal\Core\Cache\CacheBackendInterface;

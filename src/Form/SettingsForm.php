@@ -2,10 +2,8 @@
 
 /**
  * @file
- * Contains Drupal\votingapi\Form\SettingsForm.
  * Configures administrative settings for VotingAPI.
  */
-
 namespace Drupal\votingapi\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;

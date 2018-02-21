@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\votingapi\VoteTypeForm.
- */
-
 namespace Drupal\votingapi;
 
 use Drupal\Core\Entity\EntityForm;

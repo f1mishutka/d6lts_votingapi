@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\votingapi\VoteResultFunctionInterface.
- */
-
 namespace Drupal\votingapi;
 
 /**

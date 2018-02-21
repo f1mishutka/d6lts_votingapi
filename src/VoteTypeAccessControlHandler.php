@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\votingapi\VoteTypeAccessControlHandler.
- */
-
 namespace Drupal\votingapi;
 
 use Drupal\Core\Entity\EntityAccessControlHandler;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\node\Form\VoteTypeDeleteConfirm.
- */
-
 namespace Drupal\votingapi\Form;
 
 use Drupal\Core\Entity\Query\QueryFactory;

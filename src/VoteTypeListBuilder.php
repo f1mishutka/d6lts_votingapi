@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\votingapi\VoteTypeListBuilder.
- */
-
 namespace Drupal\votingapi;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;

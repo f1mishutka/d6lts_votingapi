@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\votingapi\Entity\Vote.
- */
-
 namespace Drupal\votingapi\Entity;
 
 use Drupal\views\EntityViewsData;
