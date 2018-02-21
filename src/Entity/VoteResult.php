@@ -18,6 +18,7 @@ use Drupal\votingapi\VoteResultInterface;
  *   label = @Translation("Vote Result"),
  *   handlers = {
  *     "storage" = "Drupal\votingapi\VoteResultStorage",
+ *     "access" = "Drupal\votingapi\VoteResultAccessControlHandler",
  *     "views_data" = "Drupal\votingapi\Entity\VoteResultViewsData",
  *   },
  *   base_table = "votingapi_result",

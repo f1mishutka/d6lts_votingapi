@@ -22,6 +22,7 @@ use Drupal\votingapi\VoteInterface;
  *   bundle_entity_type = "vote_type",
  *   handlers = {
  *     "storage" = "Drupal\votingapi\VoteStorage",
+ *     "access" = "Drupal\votingapi\VoteAccessControlHandler",
  *     "views_data" = "Drupal\votingapi\Entity\VoteViewsData",
  *   },
  *   base_table = "votingapi_vote",
