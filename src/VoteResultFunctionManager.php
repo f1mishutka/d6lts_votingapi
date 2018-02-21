@@ -139,7 +139,7 @@ class VoteResultFunctionManager extends DefaultPluginManager {
         'type' => $vote_type,
         'function' => $plugin_id,
         'value' => $plugin->calculateResult($votes),
-        'timestamp' => REQUEST_TIME,
+        'timestamp' => \Drupal::time()->getRequestTime(),
       ))->execute();
     }
   }

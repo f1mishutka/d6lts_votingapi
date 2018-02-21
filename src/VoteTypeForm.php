@@ -59,10 +59,10 @@ class VoteTypeForm extends EntityForm {
     }
 
     $form['label'] = array(
-      '#title' => t('Name'),
+      '#title' => $this->t('Name'),
       '#type' => 'textfield',
       '#default_value' => $type->label(),
-      '#description' => t('The human-readable name of this vote type. This text will be displayed as part of the list on the <em>Add vote type</em> page. This name must be unique.'),
+      '#description' => $this->t('The human-readable name of this vote type. This text will be displayed as part of the list on the <em>Add vote type</em> page. This name must be unique.'),
       '#required' => TRUE,
       '#size' => 30,
     );
@@ -75,25 +75,25 @@ class VoteTypeForm extends EntityForm {
         'exists' => ['Drupal\votingapi\Entity\VoteType', 'load'],
         'source' => array('label'),
       ),
-      '#description' => t('A unique machine-readable name for this vote type. It must only contain lowercase letters, numbers, and underscores.', array(
-        '%vote-add' => t('Add vote type'),
+      '#description' => $this->t('A unique machine-readable name for this vote type. It must only contain lowercase letters, numbers, and underscores.', array(
+        '%vote-add' => $this->t('Add vote type'),
       )),
     );
 
     $form['value_type'] = array(
-      '#title' => t('Value type'),
+      '#title' => $this->t('Value type'),
       '#type' => 'textfield',
       '#default_value' => $type->getValueType() ? $type->getValueType() : 'points',
-      '#description' => t('The type of value for this vote (percentage, points, etc.)'),
+      '#description' => $this->t('The type of value for this vote (percentage, points, etc.)'),
       '#required' => TRUE,
       '#size' => 30,
     );
 
     $form['description'] = array(
-      '#title' => t('Description'),
+      '#title' => $this->t('Description'),
       '#type' => 'textarea',
       '#default_value' => $type->getDescription(),
-      '#description' => t('Describe this vote type. The text will be displayed on administrative pages.'),
+      '#description' => $this->t('Describe this vote type. The text will be displayed on administrative pages.'),
     );
 
     return $form;
@@ -104,8 +104,8 @@ class VoteTypeForm extends EntityForm {
    */
   protected function actions(array $form, FormStateInterface $form_state) {
     $actions = parent::actions($form, $form_state);
-    $actions['submit']['#value'] = t('Save vote type');
-    $actions['delete']['#value'] = t('Delete vote type');
+    $actions['submit']['#value'] = $this->t('Save vote type');
+    $actions['delete']['#value'] = $this->t('Delete vote type');
     return $actions;
   }
 
@@ -137,10 +137,10 @@ class VoteTypeForm extends EntityForm {
     $t_args = array('%name' => $type->label());
 
     if ($status == SAVED_UPDATED) {
-      drupal_set_message(t('The vote type %name has been updated.', $t_args));
+      drupal_set_message($this->t('The vote type %name has been updated.', $t_args));
     }
     elseif ($status == SAVED_NEW) {
-      drupal_set_message(t('The vote type %name has been added.', $t_args));
+      drupal_set_message($this->t('The vote type %name has been added.', $t_args));
       $context = array_merge($t_args, array('link' => $type->link($this->t('View'), 'collection')));
       $this->logger('vote')->notice('Added vote type %name.', $context);
     }

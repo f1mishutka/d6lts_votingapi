@@ -122,4 +122,43 @@ class VoteTest extends WebTestBase {
     $results = $manager->getResults('node', $node->id());
     $this->assertTrue(empty($results), 'When an entity is deleted, the voting results are also deleted.');
   }
+
+  /**
+   * Test voting by anonymous users.
+   */
+  public function testAnonymousVoting() {
+    $vote_storage = $this->container->get('entity.manager')->getStorage('vote');
+    $node = $this->drupalCreateNode();
+
+    // Save a few votes from different anonymous users.
+    $values = array(
+      10 => 'source_1',
+      20 => 'source_2',
+      60 => 'source_2',
+    );
+    foreach ($values as $value => $source) {
+      $vote_storage->create(array(
+        'type' => 'vote',
+        'entity_id' => $node->id(),
+        'entity_type' => 'node',
+        'user_id' => 0,
+        'value' => $value,
+        'vote_source' => $source,
+      ))->save();
+    }
+
+    // Retrieve the votes. For now, just count them.
+    $votes_from_source_1 = $vote_storage->getUserVotes(0, 'vote', 'node', 1, 'source_1');
+    $votes_from_source_2 = $vote_storage->getUserVotes(0, 'vote', 'node', 1, 'source_2');
+    $this->assertEqual(count($votes_from_source_1), 1, 'There is 1 vote from the first source.');
+    $this->assertEqual(count($votes_from_source_2), 2, 'There are 2 votes from the second source.');
+
+    // Delete the votes from source_2 and repeat the test.
+    $vote_storage->deleteUserVotes(0, 'vote', 'node', 1, 'source_2');
+    $votes_from_source_1 = $vote_storage->getUserVotes(0, 'vote', 'node', 1, 'source_1');
+    $votes_from_source_2 = $vote_storage->getUserVotes(0, 'vote', 'node', 1, 'source_2');
+    $this->assertEqual(count($votes_from_source_1), 1, 'There is still 1 vote from the first source.');
+    $this->assertEqual(count($votes_from_source_2), 0, 'There are now 0 votes from the second source.');
+  }
+
 }
