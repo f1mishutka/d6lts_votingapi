@@ -168,7 +168,7 @@ class VoteResult extends ContentEntityBase implements VoteResultInterface {
       ->setLabel(t('Entity Type'))
       ->setDescription(t('The type from the voted entity.'))
       ->setSettings(array(
-        'max_length' => 64
+        'max_length' => 64,
       ))
       ->setRequired(TRUE);
 
@@ -185,7 +185,7 @@ class VoteResult extends ContentEntityBase implements VoteResultInterface {
     $fields['value_type'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Value Type'))
       ->setSettings(array(
-        'max_length' => 64
+        'max_length' => 64,
       ))
       ->setRequired(TRUE);
 
@@ -193,7 +193,7 @@ class VoteResult extends ContentEntityBase implements VoteResultInterface {
       ->setLabel(t('Function'))
       ->setDescription(t('Function to apply to the numbers.'))
       ->setSettings(array(
-        'max_length' => 50
+        'max_length' => 100,
       ))
       ->setRequired(TRUE);
 
