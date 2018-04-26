@@ -12,6 +12,8 @@
  * multi-criteria voting, arbitrary aggregation functions, etc.
  */
 
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -19,11 +21,15 @@ use Drupal\Core\Routing\RouteMatchInterface;
  */
 function votingapi_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
-    // Main module help for the votingapi module.
     case 'help.page.votingapi':
-      $output = '';
-      $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Voting API') . '</p>';
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('VotingAPI helps developers who want to use a standardized API and schema for storing, retrieving and tabulating votes for Drupal content.') . '</p>';
+      $output .= '<p>' . t('Please view the %url page for more details.',
+          [
+            '%url' => Link::fromTextAndUrl(t('Voting API'), Url::fromUri('https://www.drupal.org/project/votingapi'))
+              ->toString(),
+          ]
+        ) . '</p>';
       return $output;
 
     default:
