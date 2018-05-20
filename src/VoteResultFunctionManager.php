@@ -20,7 +20,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 class VoteResultFunctionManager extends DefaultPluginManager {
 
   /**
-   * Constructs a new ImageEffectManager.
+   * Constructs a new VoteResultFunctionManager.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
