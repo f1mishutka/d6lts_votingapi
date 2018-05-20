@@ -2,8 +2,6 @@
 
 namespace Drupal\votingapi\Plugin\migrate\source\d7;
 
-use Drupal\votingapi\Plugin\migrate\source\d7\Vote;
-
 /**
  * Drupal 7 vote source from database.
  *

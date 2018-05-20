@@ -106,7 +106,7 @@ VotingAPI provides Views Relationship connections for votes cast on nodes and co
 
 
 function mymodule_votingapi_relationships() {
-  $relationships[] = array(
+  $relationships[] = [
     // 'description' is used to construct the field description in the Views UI.
     'description' => t('nodes'),
     // 'entity_type' contain the value that your module stores in the voting
@@ -126,7 +126,7 @@ function mymodule_votingapi_relationships() {
     // nedjo.
     'pseudo_vote' => 'votingapi_vote',
     'pseudo_cache' => 'votingapi_cache',
-  );
+  ];
   return $relationships;
 }
 
@@ -136,9 +136,9 @@ VotingAPI's Views integration can present vote results as simple numbers, but mo
 
 function mymodule_votingapi_views_formatters($field) {
   if ($field->field == 'value') {
-    return array('mymodule_funky_formatter' => t('MyModule value formatter'));
+    return ['mymodule_funky_formatter' => t('MyModule value formatter')];
   }
   if ($field->field == 'tag') {
-    return array('mymodule_funky_tags' => t('MyModule tag formatter'));
+    return ['mymodule_funky_tags' => t('MyModule tag formatter')];
   }
 }
