@@ -652,6 +652,14 @@ function _votingapi_query_builder($name, $value, &$query, &$args, $col_is_string
     $args[] = $value;
   }
   else {
+    global $db_mysql8_reserved_keywords;
+
+    if(db_is_version('mysql', '8.0.0')) {
+      if (in_array($name, $db_mysql8_reserved_keywords)) {
+        $name = '`' . $name . '`';
+      }
+    }
+
     if (is_array($value)) {
       if ($col_is_string) {
         $query .= " AND $name IN (" . db_placeholders($value, 'varchar') . ")";
