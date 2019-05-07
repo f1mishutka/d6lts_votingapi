@@ -299,6 +299,7 @@ function votingapi_delete_votes($votes = array()) {
 
 /**
  * Delete cached vote results from the database.
+
  *
  * @param $vote_results
  *   An array of vote results to delete. Minimally, each vote result must have
@@ -654,7 +655,7 @@ function _votingapi_query_builder($name, $value, &$query, &$args, $col_is_string
   else {
     global $db_mysql8_reserved_keywords;
 
-    if(db_is_version('mysql', '8.0.0')) {
+    if(db_version_compare('mysql', '8.0.0')) {
       if (in_array($name, $db_mysql8_reserved_keywords)) {
         $name = '`' . $name . '`';
       }
